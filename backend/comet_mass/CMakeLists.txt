@@ -1,4 +1,3 @@
-find_package(pybind11 REQUIRED)
 cmake_minimum_required(VERSION 3.12)
 project(comet_mass)
 
@@ -10,8 +9,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Python REQUIRED COMPONENTS Development)
 find_package(pybind11 REQUIRED)
 
+# Поиск GoogleTest
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+
 # Создание модуля
 pybind11_add_module(comet_mass src/comet_mass.cpp)
+
+# Добавление тестов
+enable_testing()
+add_executable(test_mass tests/test_mass.cpp src/comet_mass.cpp)
+target_link_libraries(test_mass ${GTEST_LIBRARIES} pthread)
+add_test(NAME test_mass COMMAND test_mass)
 
 # Настройки оптимизации
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
